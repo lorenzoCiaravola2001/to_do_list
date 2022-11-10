@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TO DO LIST</title>
+  </head>
+  <body>
+    <input type="text" id="new-task" />
+    <button id="new-task-btn">Aggiungi Task</button>
+    <div id="todo"></div>
+
+    <script>
+      class TODOList {
+        tasks = [];
+        constructor() {
+          this.tasks = this.caricaTask();
+          console.log("todo", this.tasks);
+        }
+
+        aggiungiTask(task) {
+          this.tasks.push(task);
+          localStorage.setItem("tasks", JSON.stringify(this.tasks));
+          console.log("todo", this.tasks);
+        }
+        concludiTask(task) {
+          console.log(task);
+          const index = this.tasks.indexOf(task);
+          console.log(index);
+          this.tasks.splice(index, 1);
+          localStorage.setItem("tasks", JSON.stringify(this.tasks));
+          console.log("todo", this.tasks);
+        }
+
+        caricaTask() {
+          const tasks = JSON.parse(localStorage.getItem("tasks")) ?? [];
+          return tasks;
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const newBtn = document.getElementById("new-task-btn");
+        const clearBtn = document.getElementById("clear-btn");
+        const input = document.getElementById("new-task");
+        const todo = document.getElementById("todo");
+
+        const todoList = new TODOList();
+        todoList.tasks.forEach((task) => {
+          const element = document.createElement("p");
+          element.appendChild(document.createTextNode(task));
+          todo.appendChild(element);
+          element.addEventListener("click", (e) => {
+            todoList.concludiTask(e.srcElement.textContent);
+            e.srcElement.remove();
+          });
+        });
+
+        newBtn.addEventListener("click", () => {
+          todoList.aggiungiTask(input.value);
+
+          const element = document.createElement("p");
+          element.appendChild(document.createTextNode(input.value));
+          todo.appendChild(element);
+          element.addEventListener("click", (e) => {
+            todoList.concludiTask(e.srcElement.textContent);
+            e.srcElement.remove();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>  
